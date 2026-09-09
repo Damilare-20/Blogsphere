@@ -2,6 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 export default function CreatorDashboard() {
   const { user, token } = useContext(AuthContext);
@@ -15,7 +16,7 @@ export default function CreatorDashboard() {
     async function fetchStats() {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/admin/stats/creator/${user._id}`,
+          `${API_URL}/admin/stats/creator/${user._id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         if (!res.ok) throw new Error("Could not load your stats");

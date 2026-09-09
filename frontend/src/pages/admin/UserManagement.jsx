@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 const ROLE_STYLES = {
   admin: "bg-teal/10 text-teal",
@@ -21,7 +22,7 @@ export default function UserManagement() {
   async function fetchUsers() {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/users", {
+      const res = await fetch(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Could not load users");
@@ -40,7 +41,7 @@ export default function UserManagement() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/users/${id}/toggle-status`,
+        `${API_URL}/admin/users/${id}/toggle-status`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },

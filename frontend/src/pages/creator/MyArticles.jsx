@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 const STATUS_STYLES = {
   draft: "bg-line/40 text-muted",
@@ -17,7 +18,7 @@ export default function MyArticles() {
   useEffect(() => {
     async function fetchMyArticles() {
       try {
-        const res = await fetch("http://localhost:5000/api/articles/my", {
+        const res = await fetch(`${API_URL}/articles/my`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load your articles");

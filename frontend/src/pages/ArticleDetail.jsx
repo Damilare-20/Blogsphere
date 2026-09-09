@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import CommentSection from "../components/CommentSection";
+import { API_URL } from "../config/api";
 
 export default function ArticleDetail() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function ArticleDetail() {
   useEffect(() => {
     async function fetchArticle() {
       try {
-        const res = await fetch(`http://localhost:5000/api/articles/${id}`);
+        const res = await fetch(`${API_URL}/articles/${id}`);
         if (!res.ok) {
           throw new Error("Article not found");
         }

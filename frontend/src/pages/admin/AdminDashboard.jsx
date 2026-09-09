@@ -2,6 +2,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 export default function AdminDashboard() {
   const { token } = useContext(AuthContext);
@@ -12,7 +13,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     async function fetchStats() {
       try {
-        const res = await fetch("http://localhost:5000/api/admin/stats", {
+        const res = await fetch(`${API_URL}/admin/stats`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load platform stats");

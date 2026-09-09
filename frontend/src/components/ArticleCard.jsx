@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Bookmark, Heart, MessageCircle, MoreHorizontal, Repeat2 } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
+import { API_URL } from "../config/api";
 
 function formatCount(value) {
   return Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(value || 0);
@@ -43,7 +44,7 @@ export default function ArticleCard({ article }) {
 
     setLiking(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/articles/${article._id}/like`, {
+      const res = await fetch(`${API_URL}/articles/${article._id}/like`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -68,7 +69,7 @@ export default function ArticleCard({ article }) {
 
     setBookmarking(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/articles/${article._id}/bookmark`, {
+      const res = await fetch(`${API_URL}/articles/${article._id}/bookmark`, {
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
       });

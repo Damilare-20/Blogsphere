@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import ReactQuill from "react-quill-new";
+import { API_URL } from "../../config/api";
 import "react-quill-new/dist/quill.snow.css";
 
 export default function ArticleEditor() {
@@ -24,7 +25,7 @@ export default function ArticleEditor() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch("http://localhost:5000/api/categories");
+        const res = await fetch(`${API_URL}/categories`);
         const data = await res.json();
         setCategories(data);
         if (!isEditing && data.length > 0) {
@@ -43,7 +44,7 @@ export default function ArticleEditor() {
 
     async function fetchArticle() {
       try {
-        const res = await fetch(`http://localhost:5000/api/articles/${id}`, {
+        const res = await fetch(`${API_URL}/articles/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load this article");
@@ -75,7 +76,7 @@ export default function ArticleEditor() {
       formData.append("image", file);
 
       const res = await fetch(
-        "http://localhost:5000/api/articles/upload-image",
+        `${API_URL}/articles/upload-image`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -101,8 +102,8 @@ export default function ArticleEditor() {
 
     try {
       const url = isEditing
-        ? `http://localhost:5000/api/articles/${id}`
-        : "http://localhost:5000/api/articles";
+        ? `${API_URL}/articles/${id}`
+        : `${API_URL}/articles`;
       const method = isEditing ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -137,7 +138,7 @@ export default function ArticleEditor() {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/articles/${id}/submit`,
+        `${API_URL}/articles/${id}/submit`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },

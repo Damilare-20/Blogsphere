@@ -1,6 +1,7 @@
 // pages/admin/CategoryManagement.jsx
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 export default function CategoryManagement() {
   const { token } = useContext(AuthContext);
@@ -17,7 +18,7 @@ export default function CategoryManagement() {
   async function fetchCategories() {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/categories");
+      const res = await fetch(`${API_URL}/categories`);
       const data = await res.json();
       setCategories(data);
     } catch {
@@ -35,7 +36,7 @@ export default function CategoryManagement() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/categories", {
+      const res = await fetch(`${API_URL}/categories`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +59,7 @@ export default function CategoryManagement() {
 
   async function handleDelete(id) {
     try {
-      const res = await fetch(`http://localhost:5000/api/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

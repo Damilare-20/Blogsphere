@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { API_URL } from "../../config/api";
 
 export default function ArticleModeration() {
   const { token } = useContext(AuthContext);
@@ -15,7 +16,7 @@ export default function ArticleModeration() {
   async function fetchPending() {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/articles/pending", {
+      const res = await fetch(`${API_URL}/admin/articles/pending`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Could not load articles");
@@ -33,7 +34,7 @@ export default function ArticleModeration() {
     setError("");
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/articles/${id}/approve`,
+        `${API_URL}/admin/articles/${id}/approve`,
         { method: "PATCH", headers: { Authorization: `Bearer ${token}` } }
       );
       if (!res.ok) throw new Error("Could not approve article");
@@ -53,7 +54,7 @@ export default function ArticleModeration() {
     setError("");
     try {
       const res = await fetch(
-        `http://localhost:5000/api/admin/articles/${id}/reject`,
+        `${API_URL}/admin/articles/${id}/reject`,
         {
           method: "PATCH",
           headers: {

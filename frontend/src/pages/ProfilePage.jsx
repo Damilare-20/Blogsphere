@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import ArticleCard from "../components/ArticleCard";
+import { API_URL } from "../config/api";
 
 const ROLE_STYLES = {
   admin: "bg-teal/10 text-teal",
@@ -28,7 +29,7 @@ export default function ProfilePage() {
   useEffect(() => {
     async function fetchMyComments() {
       try {
-        const res = await fetch("http://localhost:5000/api/comments/my", {
+        const res = await fetch(`${API_URL}/comments/my`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load your comments");
@@ -45,7 +46,7 @@ export default function ProfilePage() {
 
     async function fetchBookmarks() {
       try {
-        const res = await fetch("http://localhost:5000/api/articles/bookmarks", {
+        const res = await fetch(`${API_URL}/articles/bookmarks`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Could not load your bookmarks");
@@ -75,7 +76,7 @@ export default function ProfilePage() {
     setSaving(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/auth/profile", {
+      const res = await fetch(`${API_URL}/auth/profile`, {
         method: "PUT",
         headers: { Authorization: `Bearer ${token}` },
         body: (() => {

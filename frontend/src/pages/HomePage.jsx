@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import ArticleCard from "../components/ArticleCard";
+import { API_URL } from "../config/api";
 
 export default function HomePage() {
   const [searchParams] = useSearchParams();
@@ -20,7 +21,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const res = await fetch("http://localhost:5000/api/categories");
+        const res = await fetch(`${API_URL}/categories`);
         const data = await res.json();
         setCategories(Array.isArray(data) ? data : []);
       } catch {
@@ -39,7 +40,7 @@ export default function HomePage() {
         if (selectedCategory) params.set("category", selectedCategory);
         if (searchTerm) params.set("search", searchTerm);
 
-        const url = `http://localhost:5000/api/articles${params.toString() ? `?${params.toString()}` : ""}`;
+        const url = `${API_URL}/articles${params.toString() ? `?${params.toString()}` : ""}`;
 
         const res = await fetch(url);
 

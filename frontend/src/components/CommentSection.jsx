@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { API_URL } from "../config/api";
 
 export default function CommentSection({ articleId }) {
   const { user, token } = useContext(AuthContext);
@@ -19,7 +20,7 @@ export default function CommentSection({ articleId }) {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/articles/${articleId}/comments`
+        `${API_URL}/articles/${articleId}/comments`
       );
       const data = await res.json();
       setComments(data);
@@ -45,7 +46,7 @@ export default function CommentSection({ articleId }) {
 
     try {
       const res = await fetch(
-        `http://localhost:5000/api/articles/${articleId}/comments`,
+        `${API_URL}/articles/${articleId}/comments`,
         {
           method: "POST",
           headers: {
