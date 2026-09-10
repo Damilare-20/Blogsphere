@@ -1,6 +1,6 @@
 import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { Bookmark, Heart, MessageCircle, MoreHorizontal, Repeat2 } from "lucide-react";
+import { Bookmark, Heart, MessageCircle } from "lucide-react";
 import { AuthContext } from "../context/AuthContext";
 import { API_URL } from "../config/api";
 
@@ -9,10 +9,14 @@ function formatCount(value) {
 }
 
 function stripHtml(html) {
-  return html.replace(/<[^>]*>/g, "");
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+  return temp.textContent || temp.innerText || "";
 }
 
 export default function ArticleCard({ article }) {
+  if (!article) return null;
+
   const { token } = useContext(AuthContext);
   const [liked, setLiked] = useState(article.liked || false);
   const [likeCount, setLikeCount] = useState(article.likeCount || 0);
@@ -89,9 +93,17 @@ export default function ArticleCard({ article }) {
     <article className="border-t border-line py-7 first:border-t-0">
       <Link to={`/articles/${article._id}`} className="group block">
         <div className="flex items-center gap-3 text-sm text-teal">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-peach text-xs font-bold text-orange">
-            {initials}
-          </div>
+          {article.author?.profilePicture ? (
+            <img
+              src={article.author.profilePicture}
+              alt={authorName}
+              className="h-8 w-8 shrink-0 rounded-full object-cover"
+            />
+          ) : (
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-peach text-xs font-bold text-orange">
+              {initials}
+            </div>
+          )}
           <span className="font-medium">{authorName}</span>
           <span className="text-muted">&middot; {publishedDate}</span>
         </div>
@@ -140,9 +152,6 @@ export default function ArticleCard({ article }) {
           <MessageCircle size={19} />
           <span>{formatCount(commentCount)}</span>
         </Link>
-        <button type="button" aria-label="Repost article" title="Repost" className="transition hover:text-teal">
-          <Repeat2 size={19} />
-        </button>
         <button
           type="button"
           aria-label={saved ? "Remove bookmark" : "Bookmark article"}
@@ -152,9 +161,6 @@ export default function ArticleCard({ article }) {
           className={`ml-auto transition hover:text-teal disabled:opacity-50 ${saved ? "text-teal" : ""}`}
         >
           <Bookmark size={19} fill={saved ? "currentColor" : "none"} />
-        </button>
-        <button type="button" aria-label="More article options" title="More options" className="transition hover:text-teal">
-          <MoreHorizontal size={20} />
         </button>
       </div>
     </article>

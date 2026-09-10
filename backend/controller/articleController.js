@@ -1,7 +1,7 @@
 const Article = require("../model/article");
 const User = require("../model/user");
 
-
+console.log("test");
 async function createArticle(req, res) {
   try {
     const { title, content, category, coverImage } = req.body;
@@ -38,7 +38,7 @@ async function getAllArticles(req, res) {
     const skip = (Number(page) - 1) * Number(limit);
 
     const articles = await Article.find(filter)
-      .populate("author", "name")
+      .populate("author", "name profilePicture")
       .populate("category", "name")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -73,7 +73,7 @@ async function getAllArticles(req, res) {
 async function getArticleById(req, res) {
   try {
     const article = await Article.findById(req.params.id)
-      .populate("author", "name bio")
+      .populate("author", "name bio profilePicture")
       .populate("category", "name");
 
     if (!article) {
@@ -136,7 +136,7 @@ async function getMyArticles(req, res) {
 async function getPendingArticles(req, res) {
   try {
     const articles = await Article.find({ status: "pending" })
-      .populate("author", "name")
+      .populate("author", "name profilePicture")
       .populate("category", "name")
       .sort({ createdAt: 1 });
 
@@ -263,7 +263,7 @@ async function getBookmarkedArticles(req, res) {
       _id: { $in: req.user.bookmarks },
       status: "published",
     })
-      .populate("author", "name")
+      .populate("author", "name profilePicture")
       .populate("category", "name")
       .sort({ createdAt: -1 });
 

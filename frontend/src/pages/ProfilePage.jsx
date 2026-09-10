@@ -170,7 +170,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div className="mt-6 rounded-2xl border border-line bg-white px-5 sm:px-7">
-                {bookmarks.map((article) => (
+                {bookmarks.filter(Boolean).map((article) => (
                   <ArticleCard key={article._id} article={article} />
                 ))}
               </div>
