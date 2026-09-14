@@ -1,7 +1,19 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../context/useAuth";
-import { Menu, Search, X } from "lucide-react";
+import {
+  Menu,
+  Search,
+  X,
+  Home,
+  Compass,
+  User,
+  LayoutDashboard,
+  ShieldCheck,
+  LogIn,
+  LogOut,
+  PenSquare,
+} from "lucide-react";
 
 const navLinkClass = ({ isActive }) =>
   `whitespace-nowrap rounded-pill px-3 py-1.5 text-xs font-medium transition ${
@@ -9,6 +21,9 @@ const navLinkClass = ({ isActive }) =>
       ? "bg-white text-tealdark shadow-sm"
       : "text-tealdark/75 hover:bg-white/50 hover:text-tealdark"
   }`;
+
+const mobileRowClass =
+  "flex items-center gap-3 border-b border-line px-1 py-3.5 text-sm font-medium text-tealdark transition last:border-b-0 hover:text-orange";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -137,52 +152,91 @@ export default function Navbar() {
           </div>
 
           {menuOpen && (
-            <div className="mt-2 border-t border-line pt-3 sm:hidden">
-              <form onSubmit={handleSearch}>
-                <label className="flex items-center gap-2 rounded-xl border border-tealdark/30 bg-white/75 px-3 py-2.5 text-xs text-tealdark/70">
-                  <span className="sr-only">Search articles</span>
-                  <input
-                    type="search"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search articles"
-                    className="w-full bg-transparent text-tealdark outline-none placeholder:text-tealdark/60 [&::-webkit-search-cancel-button]:appearance-none"
-                  />
-                  {searchTerm && (
-                    <button type="button" onClick={() => setSearchTerm("")} className="shrink-0 text-tealdark/50">
-                      <X className="h-3.5 w-3.5" />
+            <div className="sm:hidden">
+              <div className="mt-2 border-t border-line pt-3">
+                <form onSubmit={handleSearch}>
+                  <label className="flex items-center gap-2 rounded-xl border border-tealdark/30 bg-white/75 px-3 py-2.5 text-xs text-tealdark/70">
+                    <span className="sr-only">Search articles</span>
+                    <input
+                      type="search"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="Search articles"
+                      className="w-full bg-transparent text-tealdark outline-none placeholder:text-tealdark/60 [&::-webkit-search-cancel-button]:appearance-none"
+                    />
+                    {searchTerm && (
+                      <button type="button" onClick={() => setSearchTerm("")} className="shrink-0 text-tealdark/50">
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                    <button type="submit" className="shrink-0 text-tealdark/70">
+                      <Search className="h-4 w-4" />
                     </button>
-                  )}
-                  <button type="submit" className="shrink-0 text-tealdark/70">
-                    <Search className="h-4 w-4" />
-                  </button>
-                </label>
-              </form>
-
-              <div className="mt-3 grid gap-1">
-                <NavLink to="/" end className={navLinkClass} onClick={() => setMenuOpen(false)}>Home</NavLink>
-                <NavLink to="/#articles" className={navLinkClass} onClick={() => setMenuOpen(false)}>Explore</NavLink>
-                {user && <NavLink to="/profile" className={navLinkClass} onClick={() => setMenuOpen(false)}>Profile</NavLink>}
-                {(user?.role === "creator" || user?.role === "admin") && <NavLink to="/creator" className={navLinkClass} onClick={() => setMenuOpen(false)}>Dashboard</NavLink>}
-                {user?.role === "admin" && <NavLink to="/admin" className={navLinkClass} onClick={() => setMenuOpen(false)}>Admin</NavLink>}
+                  </label>
+                </form>
               </div>
 
-              <div className="mt-3 flex gap-2 border-t border-line pt-3">
+              <div className="mt-3 rounded-2xl border border-line bg-white px-3">
+                <NavLink to="/" end className={mobileRowClass} onClick={() => setMenuOpen(false)}>
+                  <Home className="h-5 w-5 text-tealdark/70" />
+                  Home
+                </NavLink>
+                <NavLink to="/#articles" className={mobileRowClass} onClick={() => setMenuOpen(false)}>
+                  <Compass className="h-5 w-5 text-tealdark/70" />
+                  Explore
+                </NavLink>
+                {user && (
+                  <NavLink to="/profile" className={mobileRowClass} onClick={() => setMenuOpen(false)}>
+                    <User className="h-5 w-5 text-tealdark/70" />
+                    Profile
+                  </NavLink>
+                )}
+                {(user?.role === "creator" || user?.role === "admin") && (
+                  <NavLink to="/creator" className={mobileRowClass} onClick={() => setMenuOpen(false)}>
+                    <LayoutDashboard className="h-5 w-5 text-tealdark/70" />
+                    Dashboard
+                  </NavLink>
+                )}
+                {user?.role === "admin" && (
+                  <NavLink to="/admin" className={mobileRowClass} onClick={() => setMenuOpen(false)}>
+                    <ShieldCheck className="h-5 w-5 text-tealdark/70" />
+                    Admin
+                  </NavLink>
+                )}
                 {user ? (
-                  <button type="button" onClick={() => { logout(); setMenuOpen(false); }} className="flex-1 rounded-xl border border-line px-3 py-2 text-xs font-medium text-tealdark/75">
+                  <button
+                    type="button"
+                    onClick={() => { logout(); setMenuOpen(false); }}
+                    className={`${mobileRowClass} w-full text-left`}
+                  >
+                    <LogOut className="h-5 w-5 text-tealdark/70" />
                     Log out
                   </button>
                 ) : (
-                  <Link to="/login" onClick={() => setMenuOpen(false)} className="flex-1 rounded-xl border border-line px-3 py-2 text-center text-xs font-medium text-tealdark/75">
+                  <Link to="/login" onClick={() => setMenuOpen(false)} className={mobileRowClass}>
+                    <LogIn className="h-5 w-5 text-tealdark/70" />
                     Log in
                   </Link>
                 )}
+              </div>
+
+              <div className="mt-3 pb-3">
                 {user?.role === "creator" || user?.role === "admin" ? (
-                  <Link to="/creator/new" onClick={() => setMenuOpen(false)} className="flex-1 rounded-xl bg-teal px-3 py-2 text-center text-xs font-semibold text-cream">
-                    Write
+                  <Link
+                    to="/creator/new"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full items-center justify-center gap-2 rounded-pill bg-tealdark px-4 py-3.5 text-sm font-semibold text-cream"
+                  >
+                    <PenSquare className="h-4 w-4" />
+                    Write article
                   </Link>
                 ) : !user ? (
-                  <Link to="/register" onClick={() => setMenuOpen(false)} className="flex-1 rounded-xl bg-teal px-3 py-2 text-center text-xs font-semibold text-cream">
+                  <Link
+                    to="/register"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex w-full items-center justify-center gap-2 rounded-pill bg-tealdark px-4 py-3.5 text-sm font-semibold text-cream"
+                  >
+                    <PenSquare className="h-4 w-4" />
                     Get started
                   </Link>
                 ) : null}

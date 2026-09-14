@@ -222,57 +222,71 @@ export default function ArticleEditor() {
                 Cover image
               </label>
 
-              <label
-                htmlFor="coverImageInput"
-                className="mt-1 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-peach/20 px-4 py-10 text-center transition hover:border-teal/40 hover:bg-peach/30"
-              >
-                {uploading ? (
-                  <>
-                    <svg
-                      className="h-6 w-6 animate-spin text-teal"
-                      viewBox="0 0 24 24"
-                      fill="none"
+              {coverImage ? (
+                <div className="group relative mt-1 overflow-hidden rounded-xl">
+                  <img
+                    src={coverImage}
+                    alt="Cover preview"
+                    className="h-56 w-full object-cover"
+                  />
+
+                  <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/0 opacity-0 transition group-hover:bg-black/50 group-hover:opacity-100">
+                    <label
+                      htmlFor="coverImageInput"
+                      className="cursor-pointer rounded-pill bg-white px-4 py-2 text-xs font-semibold text-teal transition hover:bg-cream"
                     >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                      />
-                    </svg>
-                    <span className="text-sm font-medium text-teal">
-                      Uploading...
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="h-8 w-8 text-orange"
-                      viewBox="0 0 24 24"
-                      fill="none"
+                      Change image
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setCoverImage(null)}
+                      className="rounded-pill bg-white px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-cream"
                     >
-                      <path
-                        d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                    <span className="text-sm font-semibold text-teal">
-                      {coverImage ? "Change image" : "Click to upload an image"}
-                    </span>
-                    <span className="text-xs text-muted">PNG, JPG, or WEBP</span>
-                  </>
-                )}
-              </label>
+                      Remove
+                    </button>
+                  </div>
+
+                  {uploading && (
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60">
+                      <svg className="h-5 w-5 animate-spin text-white" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                      </svg>
+                      <span className="text-sm font-medium text-white">Uploading...</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <label
+                  htmlFor="coverImageInput"
+                  className="mt-1 flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-line bg-peach/20 px-4 py-10 text-center transition hover:border-teal/40 hover:bg-peach/30"
+                >
+                  {uploading ? (
+                    <>
+                      <svg className="h-6 w-6 animate-spin text-teal" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                      </svg>
+                      <span className="text-sm font-medium text-teal">Uploading...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-8 w-8 text-orange" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"
+                          stroke="currentColor"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                      <span className="text-sm font-semibold text-teal">Click to upload an image</span>
+                      <span className="text-xs text-muted">PNG, JPG, or WEBP</span>
+                    </>
+                  )}
+                </label>
+              )}
+
               <input
                 id="coverImageInput"
                 type="file"
@@ -281,14 +295,6 @@ export default function ArticleEditor() {
                 disabled={uploading}
                 className="hidden"
               />
-
-              {coverImage && (
-                <img
-                  src={coverImage}
-                  alt="Cover preview"
-                  className="mt-3 h-40 w-full rounded-xl object-cover"
-                />
-              )}
             </div>
 
             <div>

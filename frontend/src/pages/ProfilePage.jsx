@@ -19,11 +19,28 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", bio: "", profilePicture: null });
+  const [copied, setCopied] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    bio: "",
+    profilePicture: null,
+  });
 
   function startEditing() {
-    setForm({ name: user?.name || "", email: user?.email || "", bio: user?.bio || "", profilePicture: null });
+    setForm({
+      name: user?.name || "",
+      email: user?.email || "",
+      bio: user?.bio || "",
+      profilePicture: null,
+    });
     setEditing(true);
+  }
+
+  function handleShare() {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   useEffect(() => {
@@ -63,11 +80,17 @@ export default function ProfilePage() {
   }, [token]);
 
   function handleChange(event) {
-    setForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setForm((current) => ({
+      ...current,
+      [event.target.name]: event.target.value,
+    }));
   }
 
   function handlePictureChange(event) {
-    setForm((current) => ({ ...current, profilePicture: event.target.files[0] || null }));
+    setForm((current) => ({
+      ...current,
+      profilePicture: event.target.files[0] || null,
+    }));
   }
 
   async function handleSave(event) {
@@ -84,13 +107,15 @@ export default function ProfilePage() {
           formData.append("name", form.name);
           formData.append("email", form.email);
           formData.append("bio", form.bio);
-          if (form.profilePicture) formData.append("profilePicture", form.profilePicture);
+          if (form.profilePicture)
+            formData.append("profilePicture", form.profilePicture);
           return formData;
         })(),
       });
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message || "Could not update your profile");
+      if (!res.ok)
+        throw new Error(data.message || "Could not update your profile");
 
       updateUser(data);
       setEditing(false);
@@ -105,53 +130,160 @@ export default function ProfilePage() {
     <main className="min-h-screen bg-[#f3f7ef] bg-[radial-gradient(circle_at_85%_8%,rgba(251,227,208,0.7),transparent_28%),radial-gradient(circle_at_12%_42%,rgba(217,245,168,0.45),transparent_24%)]">
       <section className="px-4 py-16">
         <div className="mx-auto max-w-2xl">
-          <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-line bg-white shadow-sm">
             {!editing ? (
-              <div className="flex items-center justify-between gap-5">
-                <div className="flex items-center gap-5">
-                  {user?.profilePicture ? (
-                    <img src={user.profilePicture} alt={`${user.name}'s profile`} className="h-20 w-20 shrink-0 rounded-full object-cover" />
-                  ) : (
-                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-peach text-3xl font-bold text-orange">
-                      {user?.name?.[0]?.toUpperCase() || "?"}
+              <>
+                <div className="relative h-32 bg-gradient-to-r from-tealdark to-orange sm:h-36">
+                  <span className="absolute right-4 top-4 text-xs font-bold uppercase tracking-[0.2em] text-cream/90">
+                    Read. Write. Discover.
+                  </span>
+                </div>
+
+                <div className="px-6 pb-6">
+                  <div className=" flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                    {" "}
+                    {user?.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt={`${user.name}'s profile`}
+                        className="h-24 w-24 shrink-0 rounded-full border-4 border-white object-cover shadow-sm"
+                      />
+                    ) : (
+                      <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-4 border-white bg-peach text-3xl font-bold text-orange shadow-sm">
+                        {user?.name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                    )}
+                    <div className="flex gap-2 sm:pb-1">
+                      <button
+                        type="button"
+                        onClick={handleShare}
+                        className="rounded-pill border border-line px-4 py-2 text-xs font-bold text-tealdark transition hover:border-teal"
+                      >
+                        {copied ? "Link copied!" : "Share profile"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={startEditing}
+                        className="rounded-pill bg-orange px-4 py-2 text-xs font-bold text-white transition hover:bg-orange/90"
+                      >
+                        Edit profile
+                      </button>
                     </div>
-                  )}
-                  <div>
-                    <h1 className="font-display text-2xl font-bold text-teal">{user?.name}</h1>
+                  </div>
+
+                  <div className="mt-4">
+                    <h1 className="font-display text-2xl font-bold text-teal">
+                      {user?.name}
+                    </h1>
                     <p className="mt-0.5 text-sm text-muted">{user?.email}</p>
-                    {user?.bio && <p className="mt-3 max-w-md text-sm text-tealdark/80">{user.bio}</p>}
-                    <span className={`mt-2 inline-block rounded-pill px-3 py-0.5 text-xs font-semibold capitalize ${ROLE_STYLES[user?.role] || "bg-line/40 text-tealdark/70"}`}>
+                    {user?.bio ? (
+                      <p className="mt-3 max-w-md text-sm text-tealdark/80">
+                        {user.bio}
+                      </p>
+                    ) : (
+                      <p className="mt-3 text-sm text-muted">
+                        Add a short bio to tell readers about yourself.
+                      </p>
+                    )}
+                    <span
+                      className={`mt-3 inline-block rounded-pill px-3 py-0.5 text-xs font-semibold capitalize ${ROLE_STYLES[user?.role] || "bg-line/40 text-tealdark/70"}`}
+                    >
                       {user?.role}
                     </span>
                   </div>
                 </div>
-                <button type="button" onClick={startEditing} className="rounded-xl border border-teal px-4 py-2 text-sm font-bold text-teal transition hover:bg-teal hover:text-cream">
-                  Edit profile
-                </button>
-              </div>
+              </>
             ) : (
-              <form onSubmit={handleSave} className="space-y-4">
-                <h1 className="font-display text-2xl font-bold text-teal">Edit profile</h1>
+              <form onSubmit={handleSave} className="space-y-4 p-6">
+                <h1 className="font-display text-2xl font-bold text-teal">
+                  Edit profile
+                </h1>
                 <div>
-                  <label htmlFor="profile-name" className="block text-xs font-bold uppercase tracking-wide text-teal">Name</label>
-                  <input id="profile-name" name="name" value={form.name} onChange={handleChange} required className="mt-2 w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10" />
+                  <label
+                    htmlFor="profile-name"
+                    className="block text-xs font-bold uppercase tracking-wide text-teal"
+                  >
+                    Name
+                  </label>
+                  <input
+                    id="profile-name"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10"
+                  />
                 </div>
                 <div>
-                  <label htmlFor="profile-email" className="block text-xs font-bold uppercase tracking-wide text-teal">Email address</label>
-                  <input id="profile-email" type="email" name="email" value={form.email} onChange={handleChange} required className="mt-2 w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10" />
+                  <label
+                    htmlFor="profile-email"
+                    className="block text-xs font-bold uppercase tracking-wide text-teal"
+                  >
+                    Email address
+                  </label>
+                  <input
+                    id="profile-email"
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10"
+                  />
                 </div>
                 <div>
-                  <label htmlFor="profile-bio" className="block text-xs font-bold uppercase tracking-wide text-teal">Bio</label>
-                  <textarea id="profile-bio" name="bio" value={form.bio} onChange={handleChange} rows="3" maxLength="280" placeholder="Tell readers a little about yourself" className="mt-2 w-full resize-none rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10" />
+                  <label
+                    htmlFor="profile-bio"
+                    className="block text-xs font-bold uppercase tracking-wide text-teal"
+                  >
+                    Bio
+                  </label>
+                  <textarea
+                    id="profile-bio"
+                    name="bio"
+                    value={form.bio}
+                    onChange={handleChange}
+                    rows="3"
+                    maxLength="280"
+                    placeholder="Tell readers a little about yourself"
+                    className="mt-2 w-full resize-none rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-teal outline-none focus:border-teal focus:ring-4 focus:ring-teal/10"
+                  />
                 </div>
                 <div>
-                  <label htmlFor="profile-picture" className="block text-xs font-bold uppercase tracking-wide text-teal">Profile picture</label>
-                  <input id="profile-picture" name="profilePicture" type="file" accept="image/png,image/jpeg,image/webp" onChange={handlePictureChange} className="mt-2 block w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-peach file:px-3 file:py-2 file:font-semibold file:text-orange" />
+                  <label
+                    htmlFor="profile-picture"
+                    className="block text-xs font-bold uppercase tracking-wide text-teal"
+                  >
+                    Profile picture
+                  </label>
+                  <input
+                    id="profile-picture"
+                    name="profilePicture"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    onChange={handlePictureChange}
+                    className="mt-2 block w-full rounded-xl border border-line bg-[#fafaf8] px-4 py-3 text-sm text-muted file:mr-3 file:rounded-lg file:border-0 file:bg-peach file:px-3 file:py-2 file:font-semibold file:text-orange"
+                  />
                   <p className="mt-1 text-xs text-muted">PNG, JPG, or WebP</p>
                 </div>
                 <div className="flex justify-end gap-3">
-                  <button type="button" onClick={() => { setEditing(false); setError(""); }} className="rounded-xl border border-line px-4 py-2 text-sm font-bold text-muted transition hover:border-teal hover:text-teal">Cancel</button>
-                  <button type="submit" disabled={saving} className="rounded-xl bg-teal px-4 py-2 text-sm font-bold text-cream transition hover:bg-tealdark disabled:cursor-not-allowed disabled:opacity-50">{saving ? "Saving..." : "Save changes"}</button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditing(false);
+                      setError("");
+                    }}
+                    className="rounded-xl border border-line px-4 py-2 text-sm font-bold text-muted transition hover:border-teal hover:text-teal"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="rounded-xl bg-teal px-4 py-2 text-sm font-bold text-cream transition hover:bg-tealdark disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {saving ? "Saving..." : "Save changes"}
+                  </button>
                 </div>
               </form>
             )}
@@ -197,7 +329,9 @@ export default function ProfilePage() {
                     key={comment._id}
                     className="rounded-2xl border border-line bg-white p-5 shadow-sm"
                   >
-                    <p className="text-sm text-tealdark/90">{comment.content}</p>
+                    <p className="text-sm text-tealdark/90">
+                      {comment.content}
+                    </p>
                     <Link
                       to={`/articles/${comment.article?._id}`}
                       className="mt-2 inline-block text-xs font-semibold text-orange transition hover:text-teal"
