@@ -15,15 +15,17 @@ const app = express();
 const port = process.env.PORT
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: [
-      "https://frontend-sandy-eta-66.vercel.app",
-      "http://localhost:5173",
-      "http://localhost:5174",
-    ],
-  }),
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    const isLocalFrontend = !origin || /^http:\/\/localhost:\d+$/.test(origin);
+    const configuredFrontend = (process.env.FRONTEND_URL || "").trim().replace(/\/$/, "");
+    const cleanOrigin = (origin || "").trim().replace(/\/$/, "");
+    const isConfiguredFrontend = cleanOrigin === configuredFrontend;
+
+    callback(null, isLocalFrontend || isConfiguredFrontend);
+  },
+  credentials: true
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/articles", articleRoutes);
